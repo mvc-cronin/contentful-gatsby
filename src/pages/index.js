@@ -2,23 +2,37 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import get from 'lodash/get'
 
+import Seo from '../components/seo'
 import Layout from '../components/layout'
 import Hero from '../components/hero'
-import ArticlePreview from '../components/article-preview'
+import * as styles from '../templates/blog-post.module.css'
 
 class RootIndex extends React.Component {
   render() {
-    const posts = get(this, 'props.data.allContentfulBlogPost.nodes')
-    const [author] = get(this, 'props.data.allContentfulPerson.nodes')
+    const [homePage] = get(this, 'props.data.allContentfulHomePage.nodes')
 
     return (
       <Layout location={this.props.location}>
-        <Hero
-          image={author.heroImage.gatsbyImageData}
-          title={author.name}
-          content={author.shortBio.shortBio}
+        <Seo
+          title={homePage.title}
+          description={homePage.description.childMarkdownRemark.excerpt}
+          image={`http:${homePage.heroImage.resize.src}`}
         />
-        <ArticlePreview posts={posts} />
+        <Hero
+          image={homePage.heroImage.gatsbyImageData}
+          title={homePage.heroImage.title}
+          content={homePage.description?.childMarkdownRemark?.excerpt}
+        />
+        <div className={styles.container}>
+          <div className={styles.article}>
+            <div
+              className={styles.body}
+              dangerouslySetInnerHTML={{
+                __html: homePage.body?.childMarkdownRemark?.html,
+              }}
+            />
+          </div>
+        </div>
       </Layout>
     )
   }
@@ -28,42 +42,32 @@ export default RootIndex
 
 export const pageQuery = graphql`
   query HomeQuery {
-    allContentfulBlogPost(sort: { fields: [publishDate], order: DESC }) {
+    allContentfulHomePage(
+      filter: { contentful_id: { eq: "CFCRzGRd9teOMOtifKVov" } }
+    ) {
       nodes {
         title
-        slug
-        publishDate(formatString: "MMMM Do, YYYY")
-        tags
-        heroImage {
-          gatsbyImageData(
-            layout: FULL_WIDTH
-            placeholder: BLURRED
-            width: 424
-            height: 212
-          )
-        }
         description {
+          childMarkdownRemark {
+            excerpt
+          }
+        }
+        heroImage {
+          title
+          description
+          gatsbyImageData(
+            layout: FULL_WIDTH,
+            placeholder: BLURRED,
+            width: 1280
+          )
+          resize(height: 630, width: 1200) {
+            src
+          }
+        }
+        body {
           childMarkdownRemark {
             html
           }
-        }
-      }
-    }
-    allContentfulPerson(
-      filter: { contentful_id: { eq: "15jwOBqpxqSAOy2eOO4S0m" } }
-    ) {
-      nodes {
-        name
-        shortBio {
-          shortBio
-        }
-        title
-        heroImage: image {
-          gatsbyImageData(
-            layout: CONSTRAINED
-            placeholder: BLURRED
-            width: 1180
-          )
         }
       }
     }
