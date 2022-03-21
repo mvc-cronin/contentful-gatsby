@@ -8,7 +8,7 @@ import Hero from '../components/hero'
 import Tags from '../components/tags'
 import * as styles from './blog-post.module.css'
 
-class BlogPostTemplate extends React.Component {
+class NewsPostTemplate extends React.Component {
   render() {
     const post = get(this.props, 'data.contentfulBlogPost')
     const previous = get(this.props, 'data.previous')
@@ -45,14 +45,14 @@ class BlogPostTemplate extends React.Component {
                 <ul className={styles.articleNavigation}>
                   {previous && (
                     <li>
-                      <Link to={`/blog/${previous.slug}`} rel="prev">
+                      <Link to={`/news/${previous.slug}`} rel="prev">
                         ← {previous.title}
                       </Link>
                     </li>
                   )}
                   {next && (
                     <li>
-                      <Link to={`/blog/${next.slug}`} rel="next">
+                      <Link to={`/news/${next.slug}`} rel="next">
                         {next.title} →
                       </Link>
                     </li>
@@ -67,13 +67,13 @@ class BlogPostTemplate extends React.Component {
   }
 }
 
-export default BlogPostTemplate
+export default NewsPostTemplate
 
 export const pageQuery = graphql`
-  query BlogPostBySlug(
+  query NewsPostBySlug(
     $slug: String!
-    $previousBlogPostSlug: String
-    $nextBlogPostSlug: String
+    $previousNewsPostSlug: String
+    $nextNewsPostSlug: String
   ) {
     contentfulBlogPost(slug: { eq: $slug }) {
       slug
@@ -105,11 +105,11 @@ export const pageQuery = graphql`
         }
       }
     }
-    previous: contentfulBlogPost(slug: { eq: $previousBlogPostSlug }) {
+    previous: contentfulBlogPost(slug: { eq: $previousNewsPostSlug }) {
       slug
       title
     }
-    next: contentfulBlogPost(slug: { eq: $nextBlogPostSlug }) {
+    next: contentfulBlogPost(slug: { eq: $nextNewsPostSlug }) {
       slug
       title
     }

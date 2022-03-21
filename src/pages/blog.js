@@ -31,6 +31,9 @@ export const pageQuery = graphql`
     ) {
       nodes {
         title
+        category {
+          slug
+        }
         slug
         publishDate(formatString: "MMMM Do, YYYY")
         tags
